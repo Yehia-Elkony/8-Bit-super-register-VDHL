@@ -1,0 +1,37 @@
+LIBRARY IEEE;
+USE IEEE.std_logic_1164.all;
+USE IEEE.std_logic_arith;
+USE IEEE.std_logic_unsigned;
+
+						--@@@@@@  BEGIN ENTITY  @@@@@@--                                                                     
+
+ENTITY SuperRegister IS                                                                                                  --       @@@  Control i/p  @@@                                                
+		PORT(data_in         :in       std_logic_vector(7 downto 0);                                                       --      000  ~>  LOAD NEW DATA          x                                                                  
+		     control         :in       std_logic_vector(2 downto 0);                                                       --      001  ~>  SHIFT RIGHT
+			  clk             :in                          std_logic;                                                       --      010  ~>  SHIFT LEFT
+			  data_sh_r			:in                          std_logic;                                                       --      011  ~>  ROTATE RIGHT
+			  data_sh_l       :in                          std_logic;                                                       --      100  ~>  ROTATE LEFT
+			  data_out        :out      std_logic_vector(7 downto 0);                                                       --      101  ~>  STORE PRESENT DATA
+			  Z               :out                        std_logic);                                                       --      110  ~>  COUNT UP               x
+END SuperRegister;                                                                                                       --      111  ~>  COUNT DOWN             x
+ 
+						--@@@@@@  END ENTITY  @@@@@@--
+						
+						
+						--@@@@@@  BEGIN ARCHITECTURE  @@@@@@--
+ARCHITECTURE BEHAVIOR OF SuperRegister IS
+SIGNAL count:std_logic_vector(7 downto 0);
+BEGIN
+	PROCESS(clk)
+		IF rising_edge(clk) THEN 
+			IF (control = "000")    THEN         -- LOAD NEW DATA
+				data_out <= data_in;
+			ELSIF (control = "110") THEN         -- COUNTING UP
+				count <= count + 1;
+			ELSIF (control = "111") THEN         -- COUNTING DOWN
+				count <= count -1 ;
+			END IF;
+		END IF;
+	END PROCESS;
+	Q <= count ;
+END BEHAVIOR;
